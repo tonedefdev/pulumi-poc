@@ -42,6 +42,7 @@ for i in range(cluster_count):
         },
         tags=tags
         )
-
-pulumi.export("clientCertificate", pulumi_poc_aks.kube_configs[0]["clientCertificate"])
-pulumi.export("kubeConfig", pulumi_poc_aks.kube_config_raw)
+    cert = f'clientCertificate{i}'
+    kubeConfig = f'kubeConfig{i}'
+    pulumi.export(cert, pulumi_poc_aks.kube_configs[0]["clientCertificate"])
+    pulumi.export(kubeConfig, pulumi_poc_aks.kube_config_raw)
