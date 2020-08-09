@@ -3,10 +3,9 @@ import pulumi_azure as azure
 from genetic import Genetics
 
 class AKS(Genetics):
-    def __init__(self, cluster_count, location, resource_group_name, region, project, environment):
+    def __init__(self, cluster_count, resource_group_name, location, project, environment):
         self.cluster_count = cluster_count
-        self.location = location
-        super().__init__(resource_group_name, region, project, environment)
+        super().__init__(resource_group_name, location, project, environment)
 
     def create_cluster(self):
         if self.environment == "prod":
@@ -20,6 +19,7 @@ class AKS(Genetics):
 
         aks_name = f'{self.project}-aks-{self.environment}'
         dns_prefix = f'{aks_name}-{self.environment}'
+        self.cluster_names = []
 
         for i in range(self.cluster_count):
             cluster_name = f'{aks_name}{i}'
@@ -44,4 +44,8 @@ class AKS(Genetics):
             kubeConfig = f'kubeConfig{i}'
             pulumi.export(cert, pulumi_poc_aks.kube_configs[0]["clientCertificate"])
             pulumi.export(kubeConfig, pulumi_poc_aks.kube_config_raw)
-            return print(f'Successfully built {cluster_name}')
+            self.cluster_names.append(cluster_name)
+
+    def get_kube_config(self, cluster_name):
+        aks_cluster = azure.containerservice.get_kubernetes_cluster(name=cluster_name, resource_group_name=self.resource_group_name)
+        print(aks_cluster.kube_config_raw)
