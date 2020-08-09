@@ -6,6 +6,7 @@ class AKS(Genetics):
     def __init__(self, cluster_count, resource_group_name, location, project, environment, tags):
         self.cluster_count = cluster_count
         self.cluster_names = []
+        self.kube_configs = []
         super().__init__(resource_group_name, location, project, environment, tags)
 
     def create_cluster(self):
@@ -36,7 +37,4 @@ class AKS(Genetics):
             pulumi.export(cert, pulumi_poc_aks.kube_configs[0]["clientCertificate"])
             pulumi.export(kubeConfig, pulumi_poc_aks.kube_config_raw)
             self.cluster_names.append(cluster_name)
-
-    def get_kube_config(self, cluster_name):
-        aks_cluster = azure.containerservice.get_kubernetes_cluster(name=cluster_name, resource_group_name=self.resource_group_name)
-        print(aks_cluster.kube_config_raw)
+            self.kube_configs.append(pulumi_poc_aks.kube_config_raw)
