@@ -16,7 +16,8 @@ acr = ACR(resource_count=2,
         location=rg.location,
         project=genetics.project,
         environment=genetics.environment,
-        tags=genetics.tags)
+        tags=genetics.tags
+        )
 
 acr.create_registry()
 
